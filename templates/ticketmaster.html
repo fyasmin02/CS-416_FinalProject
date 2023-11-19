@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
     <!--Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!--My CSS-->
-    <link rel="stylesheet" href="../static/css/ticketmaster.css">
+    <link rel="stylesheet" href="{% static 'css/ticketmaster.css' %}">
 </head>
 <body>
 <div class="container-fluid bg-dark text-white">
@@ -15,8 +17,10 @@
         <h1>TicketMaster</h1>
         <p class="p-2">Quickly finds ticket around you</p>
         <div class="container input-group mb-2 pb-2 small-search w-50">
-            <input type="text"  class="form-control" placeholder="Search by genre, artist or event" name="search_term" aria-label="search_term">
-            <input type="text"  class="form-control" placeholder="Enter a city e.g., Hartford" name="location" aria-label="location">
+            <input type="text" class="form-control" placeholder="Search by genre, artist or event" name="search_term"
+                   aria-label="search_term">
+            <input type="text" class="form-control" placeholder="Enter a city e.g., Hartford" name="location"
+                   aria-label="location">
             <button class="btn btn-primary" type="button">Search</button>
         </div>
         <div class="container alert alert-danger d-none w-50" role="alert" id="alert">
@@ -26,48 +30,56 @@
 </div>
 
 
-<div class="container my-5 shadow border border-1 rounded p-5" id="resultContainer" style="display: none;">
-
+<div class="container my-5 shadow border border-1 rounded p-5" id="resultContainer">
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div id="results" class="text-muted">
-                <!--<div class="card shadow p-2 mb-3">
-                    <div class="row g-0 align-items-center">
-                        <div class="col-md-4 ">
-                            <img src="..." class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-8 ">
-                            <div class="card-body">
-                                <div class="row g-0 pb-2 ">
-                                    <div class="col-6 col-sm-6 ">
-                                        <h5 class="card-title">EventName</h5>
-                                        <p class="card-text">VenueName</p>
-                                        <p class="card-text"><small class="text-body-secondary">VenueAddress <br>VenueCity,VenueState</small></p>
+                {% if events %}
+                    <section class="shadow p-2 mb-3" id="user-container">
+                        {% for event in events %}
+                            <div class="card">
+                                <div class="row g-0 align-items-center">
+                                    <div class="col-md-4 ">
+                                        <img src= "{{ event.img }}" class="img-fluid rounded-start" alt="...">
                                     </div>
-                                    <div class="col-6 col-sm-6  text-end">
-                                        <p class="card-text">Date</p>
-                                        <p class="card-text">Time</p>
+                                    <div class="col-md-8 ">
+                                        <div class="card-body">
+                                            <div class="row g-0 pb-2 ">
+                                                <div class="col-6 col-sm-6 ">
+                                                    <h5 class="card-title">{{ event.name }}</h5>
+                                                    <p class="card-text">{{ event.venue }}</p>
+                                                    <p class="card-text"><small class="text-body-secondary">{{ event.address }}
+                                                        <br>{{ event.city }},{{ event.state }}</small>
+                                                    </p>
+                                                </div>
+                                                <div class="col-6 col-sm-6  text-end">
+                                                    <p class="card-text">{{ event.startDate }}</p>
+                                                    <p class="card-text">{{ event.startTime }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
-                                <button type="button" class="btn btn-primary">Find tickets</button>
-
                             </div>
-                        </div>
-                    </div>
-                </div>-->
+                            <button type="button" class="btn btn-primary">Find tickets</button>
+                        {% endfor %}
+                    </section>
+                {% endif %}
             </div>
         </div>
-
     </div>
+</div>
+</div>
+
+</div>
 
 </div>
 
 
-
-
 <!-- Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 <!--jquery link-->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <!-- My JavaScript -->

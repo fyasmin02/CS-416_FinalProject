@@ -20,5 +20,5 @@ from Ticketmaster import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('search/', views.search)
+    path('search/', views.index, name='search-index'),
 ]

@@ -16,13 +16,14 @@
     <div class="text-center">
         <h1>TicketMaster</h1>
         <p class="p-2">Quickly finds ticket around you</p>
-        <div class="container input-group mb-2 pb-2 small-search w-50">
-            <input type="text" class="form-control" placeholder="Search by genre, artist or event" name="search_term"
-                   aria-label="search_term">
-            <input type="text" class="form-control" placeholder="Enter a city e.g., Hartford" name="location"
-                   aria-label="location">
-            <button class="btn btn-primary" type="button">Search</button>
-        </div>
+        <form action="{% url 'search-index' %}" method="post">
+            {% csrf_token %}
+            <div class="container input-group mb-2 pb-2 small-search w-50">
+                <input type="text" class="form-control" placeholder="Search by genre, artist or event" name="search_term">
+                <input type="text" class="form-control" placeholder="Enter a city e.g., Hartford" name="location">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
         <div class="container alert alert-danger d-none w-50" role="alert" id="alert">
 
         </div>
@@ -35,12 +36,12 @@
         <div class="col-lg-9">
             <div id="results" class="text-muted">
                 {% if events %}
-                    <section class="shadow p-2 mb-3" id="user-container">
-                        {% for event in events %}
-                            <div class="card">
-                                <div class="row g-0 align-items-center">
+                    {% for event in events %}
+                        <section class="shadow mb-3" id="user-container">
+                            <div class="card p-2">
+                                <div class="row align-items-center">
                                     <div class="col-md-4 ">
-                                        <img src= "{{ event.img }}" class="img-fluid rounded-start" alt="...">
+                                        <img src="{{ event.img }}" class="card-img img-fluid rounded-start" alt="...">
                                     </div>
                                     <div class="col-md-8 ">
                                         <div class="card-body">
@@ -48,9 +49,11 @@
                                                 <div class="col-6 col-sm-6 ">
                                                     <h5 class="card-title">{{ event.name }}</h5>
                                                     <p class="card-text">{{ event.venue }}</p>
-                                                    <p class="card-text"><small class="text-body-secondary">{{ event.address }}
+                                                    <p class="card-text"><small
+                                                            class="text-body-secondary">{{ event.address }}
                                                         <br>{{ event.city }},{{ event.state }}</small>
                                                     </p>
+                                                    <button type="button" class="btn btn-primary">Find tickets</button>
                                                 </div>
                                                 <div class="col-6 col-sm-6  text-end">
                                                     <p class="card-text">{{ event.startDate }}</p>
@@ -61,9 +64,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary">Find tickets</button>
-                        {% endfor %}
-                    </section>
+                        </section>
+                    {% endfor %}
                 {% endif %}
             </div>
         </div>

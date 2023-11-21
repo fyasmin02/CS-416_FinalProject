@@ -9,6 +9,14 @@ def index(request):
         search_term = request.POST.get('search_term')
         # location = "boston"
         location = request.POST.get('location')
+
+        if search_term.strip() == '' and location.strip() == '':
+            return render(request, 'ticketmaster.html',{'errors': True, 'message': 'Search and city term cannot be empty. Please enter both terms.'})
+        elif search_term.strip() == '':
+            return render(request, 'ticketmaster.html',{'errors': True, 'message': 'Search term cannot be empty. Please enter a search term.'})
+        elif location.strip() == '':
+            return render(request, 'ticketmaster.html',{'errors': True, 'message': 'City term cannot be empty. Please enter a city term.'})
+
         print(search_term)
         print(location)
 
@@ -48,6 +56,7 @@ def index(request):
                     'img': img
                 }
                 event_list.append(event_details)
+
             context = {'events': event_list}
             return render(request, 'ticketmaster.html', context)
 

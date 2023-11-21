@@ -17,11 +17,13 @@
         <h1>TicketMaster</h1>
         <p class="p-2">Quickly finds ticket around you</p>
         <form action="{% url 'search-index' %}" method="post">
+          
             {% if errors %}
                 <div class=" container alert alert-danger w-50">
                     {{ message }}
                 </div>
             {% endif %}
+          
             {% csrf_token %}
             <div class="container input-group mb-2 pb-2 small-search w-50">
                 <input type="text" class="form-control" placeholder="Search by genre, artist or event" name="search_term">
@@ -40,6 +42,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div id="results" class="text-muted">
+                {% if events %}
                     {% for event in events %}
                         <section class="shadow mb-3" id="user-container">
                             <div class="card p-2">

@@ -10,6 +10,7 @@ def index(request):
         # location = "boston"
         location = request.POST.get('location')
 
+
         if search_term.strip() == '' and location.strip() == '':
             return render(request, 'ticketmaster.html',{'errors': True, 'message': 'Search and city term cannot be empty. Please enter both terms.'})
         elif search_term.strip() == '':

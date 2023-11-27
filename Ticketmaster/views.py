@@ -1,6 +1,9 @@
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from .models import Userprofile, Event
+from datetime import datetime
+from django.contrib.auth import authenticate, login, logout
 
 
 def index(request):
@@ -44,14 +47,17 @@ def index(request):
                 ticketLink = event['url']
                 img = event['images'][0]['url']
 
+                formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
+                formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
+
                 event_details = {
                     'name': name,
                     'venue': venue,
                     'address': address,
                     'city': city,
                     'state': state,
-                    'startDate': startDate,
-                    'startTime': startTime,
+                    'startDate': formatted_date,
+                    'startTime': formatted_time,
                     'ticketLink': ticketLink,
                     'img': img
                 }
@@ -87,3 +93,40 @@ def get_data(search_term, location):
 
         # Return None to indicate failure
         return None
+
+
+def profile_list(request):
+    if request.user.is_authenticated:
+        profiles = Userprofile.objects.filter(user=request.user)
+        return render(request, 'profile_list.html', {"profiles": profiles})
+    else:
+        messages.success(request,("You Must Be Logged In"))
+        return redirect('ticketmaster')
+
+
+def log_in(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('ticketmaster')
+        else:
+            messages.success(request, ("There was an error. Try again!"))
+            return redirect('login')
+
+    else:
+        return render(request, "login.html", {})
+
+
+def log_out(request):
+    logout(request)
+    return redirect('ticketmaster')
+
+
+
+
+
+
+

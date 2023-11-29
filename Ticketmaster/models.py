@@ -10,7 +10,7 @@ class Userprofile(models.Model):
         return self.user.username
 
 
-class Event(models.Model):
+class EventHistory(models.Model):
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)
     venue = models.CharField('Venue Name', max_length=200)
@@ -25,6 +25,20 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+class EventFavorite(models.Model):
+    eventid = models.CharField('Event Name', max_length=200)
+    name = models.CharField('Event Name', max_length=200)
+    venue = models.CharField('Venue Name', max_length=200)
+    address = models.CharField('Venue Address', max_length=150)
+    city = models.CharField('Event City', max_length=150)
+    state = models.CharField('Event State', max_length=100)
+    start_date = models.CharField('Event Date',max_length=100)
+    start_time = models.CharField('Event Time', max_length=100)
+    ticket_link = models.URLField('Ticket Link', max_length=200)
+    image_url = models.URLField('Image URL', max_length=200)
+
+    def __str__(self):
+        return self.name
 
 # create profile for new users
 def create_profile(sender, instance, created, **kwargs):

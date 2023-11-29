@@ -61,12 +61,12 @@
                                     <div class="col-6 col-sm-6  text-end">
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
-                                        {% if user.is_authenticated %}
-
-                                                <a href="{{ event_id }}">Like</a>
-
-                                            <br> <br><p class="card-text"><i class="fa fa-heart-o" style="color:red"></i></p>
-                                        {% endif %}
+                                        <p id = "event_id">{{ event.id }}</p>
+                                        <button onclick = "likeEvent('{{ event.id }}')">like</button>
+{#                                        {% if user.is_authenticated %}#}
+{#                                                <a href="{% url 'add_event_favorite' %}">Like</a>#}
+{#                                            <br> <br><p class="card-text"><i class="fa fa-heart-o" style="color:red"></i></p>#}
+{#                                        {% endif %}#}
                                     </div>
                                 </div>
                             </div>

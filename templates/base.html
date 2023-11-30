@@ -24,20 +24,24 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-             {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link active ps-2" aria-current="page" href="{% url 'ticketmaster' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link ps-2" href="{% url 'profile_list' %}">MyProfile</a>
-            </li>
-                 <li class="nav-item">
-                <a class="nav-link ps-2" href="{% url 'logout' %}">Logout</a>
-            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link active ps-2" aria-current="page" href="{% url 'ticketmaster' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ps-2" href="{% url 'profile_list' %}">MyProfile</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link ps-2" href="{% url 'favorites' %}">MyFavorite</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link ps-2" href="{% url 'logout' %}">Logout</a>
+                </li>
             {% else %}
-            <li class="nav-item">
-                <a class="nav-link ps-2" href="{% url 'login' %}">Login</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link ps-2" href="{% url 'login' %}">Login</a>
+                </li>
             {% endif %}
 
         </ul>
@@ -56,6 +60,10 @@
 <!--jquery link-->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <!-- My JavaScript -->
-<script src="../static/js/ticketmaster.js"></script>
+
+{% block js %}
+
+{% endblock %}
+
 </body>
 </html>

@@ -61,11 +61,10 @@
                                     <div class="col-6 col-sm-6  text-end">
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
+
                                         {% if user.is_authenticated %}
 
-                                                <a href="{{ event_id }}">Like</a>
-
-                                            <br> <br><p class="card-text"><i class="fa fa-heart-o" style="color:red"></i></p>
+                                            <br> <br><p onclick="likeEvent('{% url 'like' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa fa-heart-o" style="color:red"></i></p>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -81,4 +80,42 @@
 </div>
 </div>
 
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        function likeEvent(url, eventId) {
+            console.log("test");
+            console.log(eventId);
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                    let $heartIcon = $('#' + eventId);
+
+                    if (response.liked) {
+                        $heartIcon.toggleClass('fa-heart fa-heart-o');
+                    } else {
+                        $heartIcon.toggleClass('fa-heart-o fa-heart');
+                    }
+                    favoritePage()
+                }
+            });
+
+
+        }
+
+function favoritePage(){
+    $.ajax({
+        url:'/favorites/',
+        success: function (htmlContent){
+            console.log(htmlContent);
+            $('#container-favorites').html(htmlContent);
+        }
+    });
+}
+
+
+    </script>
 {% endblock %}

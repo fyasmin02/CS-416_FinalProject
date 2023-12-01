@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container my-5 shadow bg-dark border border-1 rounded p-5" id="resultContainer">
+        <h3 class="text-white">My Profile</h3>
+
+        {% if profiles %}
+            {% for profile in profiles %}
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{% static 'img/avator.jpg' %}" class="img-fluid rounded-start" alt="Profile Image">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ profile.user.username }}</h5>
+                                <p class="card-text">@{{ profile.user.username }}</p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+{% endblock %}

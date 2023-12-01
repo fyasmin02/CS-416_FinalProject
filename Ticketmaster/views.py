@@ -71,18 +71,18 @@ def index(request):
                 }
                 event_list.append(event_details)
 
-                # EventHistory.objects.create(
-                #     eventid=event_id,
-                #     name=name,
-                #     venue=venue,
-                #     address=address,
-                #     city=city,
-                #     state=state,
-                #     start_date=formatted_date,
-                #     start_time=formattedma_time,
-                #     ticket_link=ticketLink,
-                #     image_url=img
-                # )
+                EventHistory.objects.create(
+                    eventid=event_id,
+                    name=name,
+                    venue=venue,
+                    address=address,
+                    city=city,
+                    state=state,
+                    start_date=formatted_date,
+                    start_time=formatted_time,
+                    ticket_link=ticketLink,
+                    image_url=img
+                )
 
             context = {'events': event_list}
             return render(request, 'ticketmaster.html', context)
@@ -150,7 +150,6 @@ def log_out(request):
 def addEventFavorite(request):
     id = request.POST.get('event_id')
     likedOrUnliked = request.POST.get('likedOrUnliked')
-    print(id)
     response_data = {'message': 'Data received and processed successfully!'}
     try:
         apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
@@ -191,6 +190,7 @@ def addEventFavorite(request):
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
     return JsonResponse(response_data)
+
 def favoritesTab(request):
     if request.user.is_authenticated:
         liked_events = EventFavorite.objects.all()

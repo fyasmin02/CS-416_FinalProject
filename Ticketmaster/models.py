@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 
 class Userprofile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    favorites = models.ManyToManyField('EventFavorite', related_name='favorites', blank=True)
+    # favorites = models.ManyToManyField('EventFavorite', related_name='favorites', blank=True)
     def __str__(self):
         return self.user.username
         return self.name

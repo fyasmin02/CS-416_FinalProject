@@ -62,7 +62,7 @@
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
                                         <p id = "event_id">{{ event.id }}</p>
-                                        <button onclick = "likeEvent('{{ event.id }}')">like</button>
+                                        <button onclick = "likeEvent('{{ event.id }}')"><h1><i id="{{ event.id }}" class="bi bi-heart"></i></h1></button>
 {#                                        {% if user.is_authenticated %}#}
 {#                                                <a href="{% url 'add_event_favorite' %}">Like</a>#}
 {#                                            <br> <br><p class="card-text"><i class="fa fa-heart-o" style="color:red"></i></p>#}

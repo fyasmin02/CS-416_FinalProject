@@ -28,13 +28,24 @@ function highQualityImage(images) {
 }
 
 function likeEvent(id) {
+     const favoriteIcon = $(`#${id}`)
+     let likedOrUnliked = "";
+     if(favoriteIcon.hasClass("bi-heart")){
+         favoriteIcon.removeClass("bi-heart").addClass("bi-heart-fill");
+         likedOrUnliked = "liked";
+     }
+     else{
+         favoriteIcon.removeClass("bi-heart-fill").addClass("bi-heart");
+         likedOrUnliked = "unliked";
+     }
     console.log(id);
     $.ajax({
         type: "POST",
         url: "/addEventFavorite/",
         data: {
             'event_id': id,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'likedOrUnliked': likedOrUnliked,
         },
         success: function(data){
             console.log("success" + id)

@@ -149,12 +149,12 @@ def log_out(request):
 @require_POST
 def addEventFavorite(request):
     id = request.POST.get('event_id')
+    likedOrUnliked = request.POST.get('likedOrUnliked')
     print(id)
     response_data = {'message': 'Data received and processed successfully!'}
     try:
         apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
         url = f'https://app.ticketmaster.com/discovery/v2/events/{id}?apikey={apikey}'
-
         response = requests.get(url)
         event = response.json()
         id = event['id']
@@ -171,18 +171,22 @@ def addEventFavorite(request):
         formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
         formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
-        EventFavorite.objects.create(
-            eventid=id,
-            name=name,
-            venue=venue,
-            address=address,
-            city=city,
-            state=state,
-            start_date=formatted_date,
-            start_time=formatted_time,
-            ticket_link=ticketLink,
-            image_url=img
-        )
+        if(likedOrUnliked == "unliked"):
+            eventEntry = EventFavorite.objects.get(eventid=id)
+            eventEntry.delete()
+        else:
+            EventFavorite.objects.create(
+                eventid=id,
+                name=name,
+                venue=venue,
+                address=address,
+                city=city,
+                state=state,
+                start_date=formatted_date,
+                start_time=formatted_time,
+                ticket_link=ticketLink,
+                image_url=img
+            )
 
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")

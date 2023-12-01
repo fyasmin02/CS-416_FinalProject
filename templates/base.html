@@ -31,7 +31,10 @@
             <li class="nav-item">
                 <a class="nav-link ps-2" href="{% url 'profile_list' %}">MyProfile</a>
             </li>
-                 <li class="nav-item">
+            <li class="nav-item">
+                <a class="nav-link ps-2" href="{% url 'favoritesTab' %}">MyFavorite</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link ps-2" href="{% url 'logout' %}">Logout</a>
             </li>
             {% else %}

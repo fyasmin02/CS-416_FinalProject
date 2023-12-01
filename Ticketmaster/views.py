@@ -190,7 +190,14 @@ def addEventFavorite(request):
 
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
-
-
     return JsonResponse(response_data)
+def favoritesTab(request):
+    if request.user.is_authenticated:
+        liked_events = EventFavorite.objects.all()
+        context = {'liked_events': liked_events}
+
+        return render(request, "favoritesTab.html", context)
+    else:
+        messages.success(request, "You Must Be Logged In")
+        return redirect('ticketmaster')
 

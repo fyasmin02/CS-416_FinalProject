@@ -61,9 +61,8 @@
                                     <div class="col-6 col-sm-6  text-end">
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
-                                        <p id = "event_id">{{ event.id }}</p>
                                         {% if user.is_authenticated %}
-                                            <button onclick = "likeEvent('{{ event.id }}')"><h1><i id="{{ event.id }}" class="bi bi-heart"></i></h1></button>
+                                            <button onclick = "likeEvent('{{ event.id }}')"><h1><i id="{{ event.id }}" class="bi {{ event.inFavorite }}"></i></h1></button>
                                         {% endif %}
                                     </div>
                                 </div>

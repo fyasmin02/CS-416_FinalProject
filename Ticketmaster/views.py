@@ -42,6 +42,9 @@ def index(request):
             events = data['_embedded']['events']
             event_list = []
 
+            #EventFavorite.objects.all().delete()
+
+
             for event in events:
                 event_id = event['id']
                 name = event['name']
@@ -57,6 +60,15 @@ def index(request):
                 formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
                 formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
+                try:
+                    # Try to get the EventFavorite with the specified event_id
+                    event_favorite = EventFavorite.objects.get(eventid=event_id)
+                    # If the record exists, set inFavorite to "bi-heart-fill"
+                    inFavorite = "bi-heart-fill"
+                except EventFavorite.DoesNotExist:
+                    # If the record does not exist, set inFavorite to "bi-heart"
+                    inFavorite = "bi-heart"
+
                 event_details = {
                     'id': event_id,
                     'name': name,
@@ -67,7 +79,8 @@ def index(request):
                     'startDate': formatted_date,
                     'startTime': formatted_time,
                     'ticketLink': ticketLink,
-                    'img': img
+                    'img': img,
+                    'inFavorite': inFavorite,
                 }
                 event_list.append(event_details)
 
@@ -81,7 +94,7 @@ def index(request):
                     start_date=formatted_date,
                     start_time=formatted_time,
                     ticket_link=ticketLink,
-                    image_url=img
+                    image_url=img,
                 )
 
             context = {'events': event_list}
@@ -146,14 +159,13 @@ def log_out(request):
     return redirect('ticketmaster')
 
 @csrf_exempt
-@require_POST
 def addEventFavorite(request):
-    id = request.POST.get('event_id')
+    event_id = request.POST.get('event_id')
     likedOrUnliked = request.POST.get('likedOrUnliked')
     response_data = {'message': 'Data received and processed successfully!'}
     try:
         apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
-        url = f'https://app.ticketmaster.com/discovery/v2/events/{id}?apikey={apikey}'
+        url = f'https://app.ticketmaster.com/discovery/v2/events/{event_id}?apikey={apikey}'
         response = requests.get(url)
         event = response.json()
         id = event['id']
@@ -195,7 +207,6 @@ def favoritesTab(request):
     if request.user.is_authenticated:
         liked_events = EventFavorite.objects.all()
         context = {'liked_events': liked_events}
-
         return render(request, "favoritesTab.html", context)
     else:
         messages.success(request, "You Must Be Logged In")

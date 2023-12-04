@@ -1,9 +1,14 @@
 .container-fluid{
     padding: 40px;
 }
-/*.form-control {*/
-/*    width: 50px;*/
-/*}*/
+.form-control {
+    width: 50px;
+}
+.likebtn {
+    background-color: transparent;
+    border-color: transparent;
+    color: red;
+}
 
 
 

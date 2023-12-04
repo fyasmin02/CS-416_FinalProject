@@ -62,7 +62,7 @@
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
                                         {% if user.is_authenticated %}
-                                            <button onclick = "likeEvent('{{ event.id }}')"><h1><i id="{{ event.id }}" class="bi {{ event.inFavorite }}"></i></h1></button>
+                                            <button class ="likebtn" onclick = "likeEvent('{{ event.id }}')"><h1><i id="{{ event.id }}" class="bi {{ event.inFavorite }}"></i></h1></button>
                                         {% endif %}
                                     </div>
                                 </div>

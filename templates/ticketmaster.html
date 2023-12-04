@@ -63,8 +63,13 @@
                                         <p class="card-text">{{ event.startTime }}</p>
 
                                         {% if user.is_authenticated %}
+{#                                            <p onclick="noteEvent('{% url 'event_notes' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa-solid fa-note-sticky" style="color:dodgerblue"></i></p>#}
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-primary note-button" data-event-id= "{{ event.event_id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Add Note
+                                            </button>
 
-                                            <br> <br><p onclick="likeEvent('{% url 'like' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa fa-heart-o" style="color:red"></i></p>
+{#                                            <br> <br><p onclick="likeEvent('{% url 'like' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa fa-heart-o" style="color:red"></i></p>#}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -79,11 +84,56 @@
 </div>
 </div>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{% url 'add_note' %}" method="post">
+                                                                {% csrf_token %}
 
+                                                                <div class="mb-3">
+                                                                    <label for="message-text" class="col-form-label">Message:</label>
+                                                                    <textarea class="form-control" id="message-text" name="note_text"></textarea>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+{#                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+                                                            <input type="submit" class="btn btn-primary" name="Submit">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 {% endblock %}
 
 {% block js %}
     <script>
+
+
+    {#$('.note-button').each(function (index, item) {#}
+    {#    $(item).click(function () {#}
+    {#        $.ajax({#}
+    {#            url: '{% url 'add_notes' %}',#}
+    {#             type : 'POST',#}
+    {#             data : {eventid : 123, note: 'Hello', csrfmiddlewaretoken: '{{ csrf_token }}'},#}
+    {#            success: function (response) {#}
+    {#                console.log(response);#}
+    {#                let $noteIcon = $('#' + eventId);#}
+    {##}
+    {#                if (response.liked) {#}
+    {#                    $noteIcon.addClass('fa-solid fa-note-sticky');#}
+    {#                } else {#}
+    {##}
+    {#                }#}
+    {#                notePage()#}
+    {#            }#}
+    {#        });#}
+    {#    })#}
+
 
         function likeEvent(url, eventId) {
             console.log("test");
@@ -106,16 +156,47 @@
 
         }
 
-function favoritePage(){
-    $.ajax({
-        url:'/favorites/',
-        success: function (htmlContent){
-            console.log(htmlContent);
-            $('#container-favorites').html(htmlContent);
+        function favoritePage(){
+            $.ajax({
+                url:'/favorites/',
+                success: function (htmlContent){
+                    console.log(htmlContent);
+                    $('#container-favorites').html(htmlContent);
+                }
+            });
         }
-    });
-}
+
+     {#   function noteEvent(url, eventId) {
+            console.log("test");
+            console.log(eventId);
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                    let $noteIcon = $('#' + eventId);
+
+                    if (response.liked) {
+                        $noteIcon.addClass('fa-solid fa-note-sticky');
+                    } else {
+
+                    }
+                    notePage()
+                }
+            });
 
 
+        }
+
+        function notePage(){
+            $.ajax({
+                url:'/notes/',
+                success: function (htmlContent){
+                    console.log(htmlContent);
+                    $('#container-notes').html(htmlContent);
+                    window.location.href = '/notes/';
+                }
+            });
+        }
+#}
     </script>
 {% endblock %}

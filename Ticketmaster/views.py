@@ -1,7 +1,7 @@
 import requests
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Userprofile, Event, EventHistory
+from .models import Userprofile, EventFavorite, EventHistory, NoteHistory
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
@@ -142,94 +142,162 @@ def log_out(request):
     return redirect('ticketmaster')
 
 
-def get_event(event_id):
-    # https://app.ticketmaster.com/discovery/v2/events/G5vVZ9g2FOggG.json?apikey=1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v
-    try:
-        apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
-        url = f"https://app.ticketmaster.com/discovery/v2/events/{event_id}.json"
+# # def get_event(event_id):
+# #     # https://app.ticketmaster.com/discovery/v2/events/G5vVZ9g2FOggG.json?apikey=1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v
+# #     try:
+# #         apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
+# #         url = f"https://app.ticketmaster.com/discovery/v2/events/{event_id}.json"
+# #
+# #         params = {
+# #             'apikey': apikey,
+# #         }
+# #
+# #         response = requests.get(url, params=params)
+# #
+# #         if response.status_code == 200:
+# #             data = response.json()
+# #         else:
+# #             print(f"Error: {response.status_code}")
+# #         return data
+# #     except requests.exceptions.RequestException as e:
+# #         # Handle request exceptions (e.g., network issues, timeouts)
+# #         print(f"Request failed: {e}")
+# #
+# #         # Return None to indicate failure
+# #         return None
+#
+#
+# # function to like or unlike event
+# def like(request, event_id):
+#     if request.user.is_authenticated:
+#         response = get_event(event_id)
+#         print(response)
+#
+#         # parsing the json data
+#         name = response['name']
+#         venue = response['_embedded']['venues'][0]['name']
+#         address = response['_embedded']['venues'][0]['address']["line1"]
+#         city = response['_embedded']['venues'][0]['city']['name']
+#         state = response['_embedded']['venues'][0]['state']['name']
+#         startDate = response['dates']['start']['dateTime']
+#         startTime = response['dates']['start']['localTime']
+#         ticketLink = response['url']
+#         img = response['images'][0]['url']
+#
+#         formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
+#         formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
+#
+#         # save the event into table
+#
+#         EventFavorite.objects.create(
+#             eventid=event_id,
+#             name=name,
+#             venue=venue,
+#             address=address,
+#             city=city,
+#             state=state,
+#             start_date=formatted_date,
+#             start_time=formatted_time,
+#             ticket_link=ticketLink,
+#             image_url=img
+#         )
+#
+#         response = {
+#             'liked': True,
+#             'message': 'you liked the event'
+#         }
+#         return JsonResponse(response)
+#     else:
+#         messages.success(request, "You Must Be Logged In")
+#         return redirect('ticketmaster')
 
-        params = {
-            'apikey': apikey,
-        }
+
+# # for favorite events
+# def favorites(request):
+#     if request.user.is_authenticated:
+#         liked_events = EventFavorite.objects.all()
+#         context = {'liked_events': liked_events}
+#
+#         return render(request, "favorites.html", context)
+#     else:
+#         messages.success(request, "You Must Be Logged In")
+#         return redirect('ticketmaster')
 
 
-        response = requests.get(url, params=params)
-
-        if response.status_code == 200:
-            data = response.json()
-        else:
-            print(f"Error: {response.status_code}")
-        return data
-    except requests.exceptions.RequestException as e:
-        # Handle request exceptions (e.g., network issues, timeouts)
-        print(f"Request failed: {e}")
-
-        # Return None to indicate failure
-        return None
-
-
-# function to like or unlike event
-def like(request, event_id):
-    if request.user.is_authenticated:
-#         liked_event = get_object_or_404(Event, eventid=event_id)
-#         user_profile, created = Userprofile.objects.get_or_create(user=request.user)
-#         if user_profile.favorites.filter(eventid=liked_event.id).exists():
-# # If the event is already liked, unlike it
-#             user_profile.favorites.remove(liked_event)
+# def event_notes(request, event_id):
+#     if request.user.is_authenticated and request.method == 'POST':
+#         event_id = request.POST.get('eventid')
+#         note_text = request.POST.get('note')
+#         if NoteHistory.objects.filter(eventid=event_id).exists():
+#             response = {
+#                 'liked': False,
+#                 'message': 'Event already exists in notes'
+#             }
 #         else:
-# # If the event is not liked, like it
-#             user_profile.favorites.add(liked_event)
-        response = get_event(event_id)
-        print(response)
+#             response = get_event(event_id)
+#             print(response)
+#
+#             # parsing the json data
+#             name = response['name']
+#             venue = response['_embedded']['venues'][0]['name']
+#             address = response['_embedded']['venues'][0]['address']["line1"]
+#             city = response['_embedded']['venues'][0]['city']['name']
+#             state = response['_embedded']['venues'][0]['state']['name']
+#             startDate = response['dates']['start']['dateTime']
+#             startTime = response['dates']['start']['localTime']
+#             ticketLink = response['url']
+#             img = response['images'][0]['url']
+#
+#             formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
+#             formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
+#
+#             # save the event into table
+#
+#             NoteHistory.objects.create(
+#                 eventid=event_id,
+#                 name=name,
+#                 venue=venue,
+#                 address=address,
+#                 city=city,
+#                 state=state,
+#                 start_date=formatted_date,
+#                 start_time=formatted_time,
+#                 ticket_link=ticketLink,
+#                 image_url=img,
+#                 notes = notes
+#             )
+#
+#             response = {
+#                 'liked': True,
+#                 'message': 'Note added successfully'
+#             }
+#         return JsonResponse(response)
+#     else:
+#         messages.success(request, "You Must Be Logged In")
+#         return redirect('ticketmaster')
 
-        # parsing the json data
-        name = response['name']
-        venue = response['_embedded']['venues'][0]['name']
-        address = response['_embedded']['venues'][0]['address']["line1"]
-        city = response['_embedded']['venues'][0]['city']['name']
-        state = response['_embedded']['venues'][0]['state']['name']
-        startDate = response['dates']['start']['dateTime']
-        startTime = response['dates']['start']['localTime']
-        ticketLink = response['url']
-        img = response['images'][0]['url']
 
-        formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
-        formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
+# for adding notes with the card
+def add_note(request):
+    if request.method == 'POST':
+        event_id = request.POST.get('event_id')
+        note_text = request.POST.get('note_text')
 
-        # save the event into table
-
-        Event.objects.create(
-            eventid=event_id,
-            name=name,
-            venue=venue,
-            address=address,
-            city=city,
-            state=state,
-            start_date=formatted_date,
-            start_time=formatted_time,
-            ticket_link=ticketLink,
-            image_url=img
+        event = get_object_or_404(EventHistory, eventid=event_id)
+        NoteHistory.objects.create(
+            note=note_text,
+            event=event
         )
-
-        response = {
-            'liked': True,
-            'message': 'you liked the event'
-        }
-        return JsonResponse(response)
-    else:
-        messages.success(request, "You Must Be Logged In")
+        messages.success(request, 'Note added successfully.')
         return redirect('ticketmaster')
+    return redirect('ticketmaster')
 
 
-# for favorite events
-def favorites(request):
+def notes(request):
     if request.user.is_authenticated:
-        liked_events = Event.objects.all()
-        context = {'liked_events': liked_events}
-
-        return render(request, "favorites.html", context)
+        # noted_events = NoteHistory.objects.all()
+        # context = {'noted_events': noted_events}
+        return render(request, "notes.html")
     else:
         messages.success(request, "You Must Be Logged In")
         return redirect('ticketmaster')
-
-

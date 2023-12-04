@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/ticketmaster.css' %}">
     <!-- font awesome script -->
     <script src="https://kit.fontawesome.com/ea9ad0f487.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/eac3b453e1.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -32,9 +33,14 @@
                     <a class="nav-link ps-2" href="{% url 'profile_list' %}">MyProfile</a>
                 </li>
 
+{#                <li class="nav-item">#}
+{#                     <a class="nav-link ps-2" href="{% url 'favorites' %}">MyFavorite</a>#}
+{#                </li>#}
+
                 <li class="nav-item">
-                    <a class="nav-link ps-2" href="{% url 'favorites' %}">MyFavorite</a>
+                    <a class="nav-link ps-2" href="{% url 'notes' %}">MyNotes</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link ps-2" href="{% url 'logout' %}">Logout</a>
                 </li>

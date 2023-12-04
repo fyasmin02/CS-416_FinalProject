@@ -1,14 +1,13 @@
-
 {% extends 'base.html' %}
 
 {% block content%}
 
-    {% if liked_events %}
+    {% if noted_events %}
         <div class="container my-5 shadow border border-1 rounded p-5" id="resultContainer">
         <div class="row justify-content-center">
         <div class="col-lg-9">
         <div id="results" class="text-muted">
-        {% for event in liked_events %}
+        {% for event in noted_events %}
             <section class="shadow mb-3" id="user-container">
                 <div class="card p-2">
                     <div class="row align-items-center">
@@ -36,8 +35,7 @@
                                         <p class="card-text">{{ event.start_time }}</p>
 
                                         {% if user.is_authenticated %}
-                                            <br><br>
-                                                <i id="{{ event.eventid }}" class="fa fa-heart-o" style="color:red"></i>
+                                            
                                         {% endif %}
                                     </div>
                                 </div>
@@ -48,6 +46,6 @@
             </section>
         {% endfor %}
     {% else %}
-        <h3>You Don't Have Any Favorites!!!</h3>
+        <h3>You Don't Have Any Notes!!!</h3>
     {% endif %}
 {% endblock %}

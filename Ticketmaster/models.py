@@ -5,13 +5,12 @@ from django.db.models.signals import post_save
 
 class Userprofile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    favorites = models.ManyToManyField('Event', related_name='favorites', blank=True)
 
     def __str__(self):
         return self.user.username
 
 
-class Event(models.Model):
+class EventFavorite(models.Model):
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)
     venue = models.CharField('Venue Name', max_length=200)
@@ -41,6 +40,14 @@ class EventHistory(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class NoteHistory(models.Model):
+    note = models.TextField('My Notes', max_length=500)
+    event = models.ForeignKey(EventHistory, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.note
 
 
 # create profile for new users

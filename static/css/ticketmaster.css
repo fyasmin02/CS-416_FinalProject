@@ -2,6 +2,11 @@
     padding: 40px;
 }
 
+.likebtn {
+    background-color: transparent;
+    border-color: transparent;
+    color: red;
+}
 
 
 

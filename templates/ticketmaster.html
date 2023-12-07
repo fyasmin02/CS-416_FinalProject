@@ -61,17 +61,53 @@
                                     <div class="col-6 col-sm-6  text-end">
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
-
                                         {% if user.is_authenticated %}
+                                            <!-- Button trigger modal -->
 
-                                            <br> <br><p onclick="likeEvent('{% url 'like' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa fa-heart-o" style="color:red"></i></p>
+                                            <button class ="likebtn" onclick = "likeEvent('{{ event.id }}')"><h1><i class="bi {{ event.inFavorite }}"></i></h1></button>
+                                            <br>
+                                            <button type="button" class="btn btn-primary note-button" data-info="{{ event.id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Add Note
+                                            </button>
                                         {% endif %}
                                     </div>
                                 </div>
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form id="{{ event.id }}">
+                                                <div class="modal-body">
+
+                                                    <div class="mb-3">
+                                                        <label for="message-text" class="col-form-label">Message:</label>
+                                                        <textarea class="form-control note-text" name="message"></textarea>
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" onclick="sendNote('{{ event.id }}')" class="btn btn-primary">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+                    {#                    <div class="row">#}
+                    {#                        <div class="card-body">#}
+                    {#                            <p>Notes:</p>#}
+                    {#                            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.#}
+                    {#                        </div>#}
+                    {#                    </div>#}
                 </div>
+
             </section>
         {% endfor %}
     {% endif %}
@@ -80,42 +116,76 @@
 </div>
 </div>
 
-{% endblock %}
 
+    <!-- Step 4 (To view note) works like products.html from slides -->
+    <!-- Inside of Add Note button -->
+
+
+    {#    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+    {#        <div class="modal-dialog">#}
+    {#            <div class="modal-content">#}
+    {#                <div class="modal-header">#}
+    {#                    <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>#}
+    {#                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+    {#                </div>#}
+    {#                <div class="modal-body">#}
+    {#                    <form id="'{{ event.id }}'" >#}
+    {#                         <!--adding event_id as a hidden input field to send along with the message -->#}
+    {#                            <input type="hidden" id="event-id" name="event_id" value="">#}
+    {##}
+    {#                        <div class="mb-3">#}
+    {#                            <label for="message-text" class="col-form-label">Message:</label>#}
+    {#                            <textarea class="form-control" id="message-text" name="message"></textarea>#}
+    {#                        </div>#}
+    {#                    </form>#}
+    {#                </div>#}
+    {#                <div class="modal-footer">#}
+    {#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+    {#                    <button type="button" class="btn btn-primary" id="submitNote">Submit</button>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+
+
+
+{% endblock %}
 {% block js %}
+
     <script>
 
-        function likeEvent(url, eventId) {
-            console.log("test");
+        function sendNote(eventId) {
+
             console.log(eventId);
-            $.ajax({
-                url: url,
-                success: function (response) {
-                    console.log(response);
-                    let $heartIcon = $('#' + eventId);
 
-                    if (response.liked) {
-                        $heartIcon.toggleClass('fa-heart fa-heart-o');
-                    } else {
-                        $heartIcon.toggleClass('fa-heart-o fa-heart');
-                    }
-                    favoritePage()
-                }
-            });
+            let note = $('#' + eventId).find('.note-text').val();
+            console.log(note);
 
 
-        }
+              $.ajax({
+                  url: '{% url "add_notes" %}', // Ensure this URL is correctly named in Django urls.py
+                  type: 'POST',
+                        data: {
+                            event_id: eventId,
+                            message: note,
+                            csrfmiddlewaretoken: '{{ csrf_token }}' // Ensure this token is correctly placed in template
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            if (response.added) {
+                                console.log("yay!");
+                                $("[data-bs-dismiss=modal]").trigger({ type: "click" });
+                            }
+                        },
+                        error: function (error) {
+                            console.log(error);
+                            // Handle error
+                        }
+                    });
 
-function favoritePage(){
-    $.ajax({
-        url:'/favorites/',
-        success: function (htmlContent){
-            console.log(htmlContent);
-            $('#container-favorites').html(htmlContent);
-        }
-    });
-}
+    }
 
 
     </script>
+
 {% endblock %}

@@ -33,10 +33,13 @@ function likeEvent(id) {
      if(favoriteIcon.hasClass("bi-heart")){
          favoriteIcon.removeClass("bi-heart").addClass("bi-heart-fill");
          likedOrUnliked = "liked";
+         console.log("liked");
      }
      else{
          favoriteIcon.removeClass("bi-heart-fill").addClass("bi-heart");
          likedOrUnliked = "unliked";
+         console.log("unliked");
+         console.log("test");
      }
     console.log(id);
     $.ajax({

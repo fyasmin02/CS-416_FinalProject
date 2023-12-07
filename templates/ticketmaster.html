@@ -61,14 +61,10 @@
                                     <div class="col-6 col-sm-6  text-end">
                                         <p class="card-text">{{ event.startDate }}</p>
                                         <p class="card-text">{{ event.startTime }}</p>
-                                        <p id = "event_id">{{ event.id }}</p>
-                                        {% if user.is_authenticated %}
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-primary note-button" id="note-`{{ event.id }}`" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                Add Note
-                                            </button>
 
-                                            <button onclick = "likeEvent('{{ event.eventid }}')"><h1><i id="{{ event.eventid }}" class="bi bi-heart"></i></h1></button>
+                                        {% if user.is_authenticated %}
+
+                                            <br> <br><p onclick="likeEvent('{% url 'like' event.event_id %}', '{{ event.event_id }}')" class="card-text"><i id="{{ event.event_id }}" class="fa fa-heart-o" style="color:red"></i></p>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -84,75 +80,42 @@
 </div>
 </div>
 
-
-
-
-    <!-- Step 4 (To view note) works like products.html from slides -->
-    <!-- Inside of Add Note button -->
-
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form>
-                                                                <div class="mb-3">
-                                                                    <label for="message-text" class="col-form-label">Message:</label>
-                                                                    <textarea class="form-control" id="message-text"></textarea>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <a class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-{#                                                            <!-- (Updating note) <a href="##{% url 'update_note' note_event.id %}##">-->#}
-                                                           <button type="button" class="btn btn-primary">Send message</button>
-                                                        </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
 {% endblock %}
+
 {% block js %}
     <script>
-    $('.note-button').each(function (index, item) {
-        console.log('index of each: ' + index);
 
-        $(item).click(function () {
-            console.log('test');
-            console.log(index);
-          let eventId = $(this).attr('id');
+        function likeEvent(url, eventId) {
+            console.log("test");
             console.log(eventId);
-            let note = 'Hello'; //???
-
-            // send note to the server
-            {% comment %}
             $.ajax({
-                url: '{% url "add_notes" %}', // Ensure this URL is correctly named in Django urls.py
-                type: 'POST',
-                data: {
-                    event_id: event,
-                    note: note,
-                    csrfmiddlewaretoken: '{{ csrf_token }}' // Ensure this token is correctly placed in template
-                },
+                url: url,
                 success: function (response) {
                     console.log(response);
-                    let $noteIcon = $('#' + eventId); // Ensure this selector correctly targets desired element
+                    let $heartIcon = $('#' + eventId);
 
-                    if (response.note) { // Check response object for the correct property
-                        $noteIcon.addClass('fa-solid fa-note-sticky'); // Adjust class names as per your requirement
+                    if (response.liked) {
+                        $heartIcon.toggleClass('fa-heart fa-heart-o');
                     } else {
-                        // Handle the else condition if needed
+                        $heartIcon.toggleClass('fa-heart-o fa-heart');
                     }
-                    notePage(); // Ensure this function is defined and does what it expects (would this be note-form.html)
+                    favoritePage()
                 }
-            });{% endcomment %}
-        });
-});
+            });
+
+
+        }
+
+function favoritePage(){
+    $.ajax({
+        url:'/favorites/',
+        success: function (htmlContent){
+            console.log(htmlContent);
+            $('#container-favorites').html(htmlContent);
+        }
+    });
+}
+
+
     </script>
 {% endblock %}

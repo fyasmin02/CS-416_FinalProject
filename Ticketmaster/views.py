@@ -279,7 +279,6 @@ def add_notes(request):
         )
 
 
-
         # probably need to modify this
         #event = get_object_or_404(EventHistory, eventid=event_id)
         if created:
@@ -296,7 +295,7 @@ def add_notes(request):
     else:
         return JsonResponse(
             {
-                'message': 'something went wrong'
+                'message': 'Something went wrong'
             }
         )
 

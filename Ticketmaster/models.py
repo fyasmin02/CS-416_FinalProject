@@ -7,8 +7,7 @@ class Userprofile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # favorites = models.ManyToManyField('EventFavorite', related_name='favorites', blank=True)
     def __str__(self):
-        return self.user.username
-        return self.name
+        return self.user
 
 
 class EventHistory(models.Model):
@@ -26,6 +25,7 @@ class EventHistory(models.Model):
     def __str__(self):
         return self.name
 
+
 class EventFavorite(models.Model):
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)
@@ -40,6 +40,16 @@ class EventFavorite(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class NoteHistory(models.Model):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(EventHistory, on_delete=models.CASCADE)
+    message = models.TextField()
+
+    def __str__(self):
+        return f"{self.event} {self.message}"
+
 
 # create profile for new users
 def create_profile(sender, instance, created, **kwargs):

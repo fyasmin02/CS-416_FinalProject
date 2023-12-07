@@ -7,6 +7,7 @@
         <div class="row justify-content-center">
         <div class="col-lg-9">
         <div id="results" class="text-muted">
+{#         change this part probably #}
         {% for event in noted_events %}
             <section class="shadow mb-3" id="user-container">
                 <div class="card p-2">
@@ -35,11 +36,19 @@
                                         <p class="card-text">{{ event.start_time }}</p>
 
                                         {% if user.is_authenticated %}
-                                            
+
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="card-body">
+                            <p>Notes:</p>
+
+                                {{ note.message }}
+
                         </div>
                     </div>
                 </div>

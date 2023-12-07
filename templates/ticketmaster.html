@@ -64,15 +64,24 @@
                                         {% if user.is_authenticated %}
                                             <!-- Button trigger modal -->
 
-                                            <button class ="likebtn" onclick = "likeEvent('{{ event.id }}')"><h1><i class="bi {{ event.inFavorite }}"></i></h1></button>
+
+
+                                            <button class ="likebtn" onclick = "likeEvent('{{ event.id }}')">
+                                                {% if event.favorite_status %}
+                                                    <h1><i id="favorite-icon-{{ event.id }}" class="bi bi-heart-fill"></i></h1>
+                                                {% else %}
+                                                    <h1><i id="favorite-icon-{{ event.id }}" class="bi bi-heart"></i></h1>
+                                                {% endif %}
+
+                                            </button>
                                             <br>
-                                            <button type="button" class="btn btn-primary note-button" data-info="{{ event.id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <button type="button" class="btn btn-primary note-button" data-info="{{ event.id }}" data-bs-toggle="modal" data-bs-target="#model-{{ event.id }}">
                                                 Add Note
                                             </button>
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="model-{{ event.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -89,7 +98,7 @@
 
                                                 </div>
                                                 <div class="modal-footer">
-                                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                     <button type="button" onclick="sendNote('{{ event.id }}')" class="btn btn-primary">Submit</button>
                                                 </div>
                                             </form>
@@ -162,28 +171,28 @@
             console.log(note);
 
 
-              $.ajax({
-                  url: '{% url "add_notes" %}', // Ensure this URL is correctly named in Django urls.py
-                  type: 'POST',
-                        data: {
-                            event_id: eventId,
-                            message: note,
-                            csrfmiddlewaretoken: '{{ csrf_token }}' // Ensure this token is correctly placed in template
-                        },
-                        success: function (response) {
-                            console.log(response);
-                            if (response.added) {
-                                console.log("yay!");
-                                $("[data-bs-dismiss=modal]").trigger({ type: "click" });
-                            }
-                        },
-                        error: function (error) {
-                            console.log(error);
-                            // Handle error
-                        }
-                    });
+            $.ajax({
+                url: '{% url "add_notes" %}', // Ensure this URL is correctly named in Django urls.py
+                type: 'POST',
+                data: {
+                    event_id: eventId,
+                    message: note,
+                    csrfmiddlewaretoken: '{{ csrf_token }}' // Ensure this token is correctly placed in template
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.added) {
+                        console.log("yay!");
+                        $("[data-bs-dismiss=modal]").trigger({ type: "click" });
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                    // Handle error
+                }
+            });
 
-    }
+        }
 
 
     </script>

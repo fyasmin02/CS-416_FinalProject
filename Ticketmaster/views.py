@@ -60,14 +60,11 @@ def index(request):
                 formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
                 formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
-                try:
-                    # Try to get the EventFavorite with the specified event_id
-                    event_favorite = EventFavorite.objects.get(eventid=event_id)
-                    # If the record exists, set inFavorite to "bi-heart-fill"
-                    inFavorite = "bi-heart-fill"
-                except EventFavorite.DoesNotExist:
-                    # If the record does not exist, set inFavorite to "bi-heart"
-                    inFavorite = "bi-heart"
+                event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
+
+                favorite_status = True
+                if event_favorite_count == 0:
+                    favorite_status = False
 
                 event_details = {
                     'id': event_id,
@@ -80,7 +77,7 @@ def index(request):
                     'startTime': formatted_time,
                     'ticketLink': ticketLink,
                     'img': img,
-                    'inFavorite': inFavorite,
+                    'favorite_status': favorite_status,
                 }
                 event_list.append(event_details)
 
@@ -198,50 +195,57 @@ def get_event_from_id(event_id):
         print(f"Error: {e}")
     return None
 
-@csrf_exempt
+
 def addEventFavorite(request):
-    event_id = request.POST.get('event_id')
-    likedOrUnliked = request.POST.get('likedOrUnliked')
-    response_data = {'message': 'Data received and processed successfully!'}
-    try:
-        apikey = "1FPse6gUOjUlhYtMUbdEG6Wz5GsGmj3v"
-        url = f'https://app.ticketmaster.com/discovery/v2/events/{event_id}?apikey={apikey}'
-        response = requests.get(url)
-        event = response.json()
-        id = event['id']
-        name = event['name']
-        venue = event['_embedded']['venues'][0]['name']
-        address = event['_embedded']['venues'][0]['address']["line1"]
-        city = event['_embedded']['venues'][0]['city']['name']
-        state = event['_embedded']['venues'][0]['state']['name']
-        startDate = event['dates']['start']['dateTime']
-        startTime = event['dates']['start']['localTime']
-        ticketLink = event['url']
-        img = event['images'][0]['url']
+    if request.method == 'POST':
+        event_id = request.POST.get('event_id')
 
-        formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
-        formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
-        if(likedOrUnliked == "unliked"):
-            eventEntry = EventFavorite.objects.get(eventid=id)
-            eventEntry.delete()
-        else:
-            EventFavorite.objects.create(
-                eventid=id,
-                name=name,
-                venue=venue,
-                address=address,
-                city=city,
-                state=state,
-                start_date=formatted_date,
-                start_time=formatted_time,
-                ticket_link=ticketLink,
-                image_url=img
-            )
+        print(event_id)
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-    return JsonResponse(response_data)
+
+        #EventFavorite.objects.all().delete()
+
+        response_data = {'message': 'Data received and processed successfully!'}
+
+        liked = True
+
+        event_data = get_event_from_id(event_id)
+
+        event_object, created = EventFavorite.objects.get_or_create(
+            eventid=event_data['eventid'],
+            name=event_data['name'],
+            venue=event_data['venue'],
+            address=event_data['address'],
+            city=event_data['city'],
+            state=event_data['state'],
+            start_date=event_data['start_date'],
+            start_time=event_data['start_time'],
+            ticket_link=event_data['ticket_link'],
+            image_url=event_data['image_url'],
+            liked=liked
+        )
+
+        print('created status:', created)
+
+        if not created:
+            liked = False
+            EventFavorite.objects.get(eventid=event_id).delete()
+
+        return JsonResponse(
+            {
+                'liked': liked
+            }
+        )
+    else:
+        return JsonResponse(
+            {
+                'message': 'Something went wrong'
+            }
+        )
+
+
+
 
 
 def favoritesTab(request):

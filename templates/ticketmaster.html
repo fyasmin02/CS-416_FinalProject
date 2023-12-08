@@ -109,12 +109,14 @@
                             </div>
                         </div>
                     </div>
-                    {#                    <div class="row">#}
-                    {#                        <div class="card-body">#}
-                    {#                            <p>Notes:</p>#}
-                    {#                            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.#}
-                    {#                        </div>#}
-                    {#                    </div>#}
+                    {% for note in event.NoteHistory_set.all %}
+                                        <div class="row">
+                                            <div class="card-body">
+                                                <p>Notes:</p>
+                                               <p>{{ note.message }}</p>
+                                            </div>
+                                        </div>
+                        {% endfor %}
                 </div>
 
             </section>

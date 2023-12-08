@@ -5,8 +5,8 @@ from .models import Userprofile, EventHistory, EventFavorite, NoteHistory
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+# from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.http import require_POST
 
 
 def index(request):

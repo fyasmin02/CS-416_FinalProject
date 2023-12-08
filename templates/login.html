@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+<h3 class="text-center">You are already Logged In!</h3>
+
+{% else %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+               {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+    <div class="container bg-dark my-5 shadow border border-1 rounded p-5" id="resultContainer">
+  <h1 class="text-white">Log In</h1>
+    <br/>
+    <form action="" method=POST>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label text-white">Username</label>
+            <input type="text" class="form-control w-100" name="username" placeholder="Enter Username">
+        </div>
+        <div class="mb-3">
+            <label class="form-label text-white">Password</label>
+            <input type="password" class="form-control w-100" name="password" placeholder="Enter Password">
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+</div>
+
+{% endif %}
+{% endblock %}

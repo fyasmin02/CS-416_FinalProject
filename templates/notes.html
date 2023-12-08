@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+    {% if noted_events %}
+        <div class="container my-5 shadow border border-1 rounded p-5" id="resultContainer">
+        <div class="row justify-content-center">
+        <div class="col-lg-9">
+        <div id="results" class="text-muted">
+
+        {% for noted_event in noted_events %}
+            <section class="shadow mb-3" id="user-container">
+                <div class="card p-2">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <img src="{{ noted_event.event.image_url }}" class="card-img img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="row g-0 pb-2">
+                                    <div class="col-6 col-sm-6">
+                                        <h5 class="card-title">{{ noted_event.event.name }}</h5>
+                                        <p class="card-text">{{ noted_event.event.venue }}</p>
+                                        <p class="card-text">
+                                            <small class="text-body-secondary">
+                                                {{ noted_event.event.address }}<br>
+                                                {{ noted_event.event.city }}, {{ noted_event.event.state }}
+                                            </small>
+                                        </p>
+                                        <a href="{{ noted_event.event.ticket_link }}">
+                                            <button type="button" class="btn btn-primary">Find tickets</button>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 col-sm-6 text-end">
+                                        <p class="card-text">{{ noted_event.event.start_date }}</p>
+                                        <p class="card-text">{{ noted_event.event.start_time }}</p>
+
+                                        {% if user.is_authenticated %}
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="card-body">
+                            <p>Notes:</p>
+
+                                {{ noted_event.message }}
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% endfor %}
+    {% else %}
+        <h3>You Don't Have Any Notes!!!</h3>
+    {% endif %}
+{% endblock %}

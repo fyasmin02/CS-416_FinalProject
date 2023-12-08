@@ -11,6 +11,7 @@ class Userprofile(models.Model):
 
 
 class EventHistory(models.Model):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)
     venue = models.CharField('Venue Name', max_length=200)
@@ -27,6 +28,7 @@ class EventHistory(models.Model):
 
 
 class EventFavorite(models.Model):
+    liked = models.BooleanField(default=False)
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)
     venue = models.CharField('Venue Name', max_length=200)

@@ -61,6 +61,11 @@
         crossorigin="anonymous"></script>
 <!--jquery link-->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+         <script>
+             var csrf_token = "{{ csrf_token }}";
+         </script>
+
 <!-- My JavaScript -->
 <script src="../static/js/ticketmaster.js"></script>
 {% block js %}

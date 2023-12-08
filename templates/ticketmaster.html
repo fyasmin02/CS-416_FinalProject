@@ -64,8 +64,6 @@
                                         {% if user.is_authenticated %}
                                             <!-- Button trigger modal -->
 
-
-
                                             <button class ="likebtn" onclick = "likeEvent('{{ event.id }}')">
                                                 {% if event.favorite_status %}
                                                     <h1><i id="favorite-icon-{{ event.id }}" class="bi bi-heart-fill"></i></h1>

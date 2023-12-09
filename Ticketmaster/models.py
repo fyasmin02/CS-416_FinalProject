@@ -28,6 +28,7 @@ class EventHistory(models.Model):
 
 
 class EventFavorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  #added for multiuser
     liked = models.BooleanField(default=False)
     eventid = models.CharField('Event Name', max_length=200)
     name = models.CharField('Event Name', max_length=200)

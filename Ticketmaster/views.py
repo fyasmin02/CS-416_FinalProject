@@ -6,6 +6,7 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from .forms import registerForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
@@ -62,8 +63,8 @@ def index(request):
                 formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
                 formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
-                event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
-
+               # event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
+                event_favorite_count = EventFavorite.objects.filter(user=request.user, eventid=event_id).count()
                 favorite_status = True
                 if event_favorite_count == 0:
                     favorite_status = False
@@ -198,10 +199,11 @@ def get_event_from_id(event_id):
     return None
 
 
-def addEventFavorite(request):
-    if request.method == 'POST':
-        event_id = request.POST.get('event_id')
 
+def addEventFavorite(request):
+    #if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:  # added for multiuser
+        event_id = request.POST.get('event_id')
 
         print(event_id)
 
@@ -215,6 +217,7 @@ def addEventFavorite(request):
         event_data = get_event_from_id(event_id)
 
         event_object, created = EventFavorite.objects.get_or_create(
+            user=request.user,  # added for multiuser
             eventid=event_data['eventid'],
             name=event_data['name'],
             venue=event_data['venue'],
@@ -232,7 +235,8 @@ def addEventFavorite(request):
 
         if not created:
             liked = False
-            EventFavorite.objects.get(eventid=event_id).delete()
+            event_object.delete()  # added for multiuser
+            # EventFavorite.objects.get(eventid=event_id).delete()
 
         return JsonResponse(
             {
@@ -249,7 +253,8 @@ def addEventFavorite(request):
 
 def favoritesTab(request):
     if request.user.is_authenticated:
-        liked_events = EventFavorite.objects.all()
+        # liked_events = EventFavorite.objects.all()
+        liked_events = EventFavorite.objects.filter(user=request.user)  # added for multiuser
         context = {'liked_events': liked_events}
         return render(request, "favoritesTab.html", context)
     else:

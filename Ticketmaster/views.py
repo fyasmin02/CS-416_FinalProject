@@ -64,9 +64,9 @@ def index(request):
                 formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
                 if request.user.is_authenticated:
-                    event_favorite_count = EventFavorite.objects.filter(user=request.user, eventid=event_id).count()
+                    event_favorite_count = EventFavorite.objects.filter(user=request.user, eventid=event_id).count()  # added for multiuser
                 else:
-                    event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()   # added for multiuser
+                    event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
                 favorite_status = True
                 if event_favorite_count == 0:
                     favorite_status = False

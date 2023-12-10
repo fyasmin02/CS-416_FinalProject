@@ -1,4 +1,6 @@
 import requests
+import logging
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Userprofile, EventHistory, EventFavorite, NoteHistory
@@ -342,6 +344,55 @@ def add_notes(request):
 #
 #
 
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+# @login_required
+def updateNote(request):
+    print('test')
+
+    if request.method == 'POST':
+         event_id = request.POST.get('event_id')
+         new_note = request.POST.get('new_note')
+         logger.debug('Event ID: %s', event_id)  # Replaced print with logger.debug
+         logger.debug('New Note: %s', new_note)  # Replaced print with logger.debug
+
+
+         # return JsonResponse({"status": "error", "message": "Invalid event ID."})
+         # Ensure the event_id and new_note are provided
+         if event_id and new_note:
+
+            try:
+                event_object = EventHistory.objects.get(eventid=event_id)
+                event_note = NoteHistory.objects.get(event=event_object)
+                logger.debug('Current Note Message: %s', event_note.message)  # Replaced print with logger.debug
+                # Update the note content
+                event_note.message = new_note
+                event_note.save()
+
+
+                return JsonResponse(
+                    {"status": "success",
+                     "message": "Note updated successfully.",
+                     "noteid": event_note.id}
+                )
+
+            except NoteHistory.DoesNotExist:
+                logger.warning('Note does not exist for event ID: %s', event_id)  # Log a warning
+                # Handle the case where the note doesn't exist
+                return JsonResponse({"status": "error", "message": "Note not found."}, status=404)
+            except Exception as e:
+                logger.error('Error updating note', exc_info=True)  # Log error with traceback
+                # Handle other exceptions
+                return JsonResponse({"status": "error", "message": str(e)}, status=500)
+         else:
+             logger.warning('Missing data for event ID or new note')
+             return JsonResponse({"status": "error", "message": "Missing data."}, status=400)
+    else:
+         logger.warning('Invalid request method for updateNote')  # Log a warning
+         return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
 def notes(request):
     if request.user.is_authenticated:
         noted_events = NoteHistory.objects.all()
@@ -350,6 +401,22 @@ def notes(request):
     else:
         messages.success(request, "You Must Be Logged In")
         return redirect('ticketmaster')
+
+
+# def delete_notes(request):
+#     if request.method == 'POST':
+#         event_id = request.POST.get('event_id')
+#
+#         try:
+#             event = NoteHistory.objects.get(eventid=event_id)
+#             event.delete()
+#             deleted = True
+#         except NoteHistory.DoesNotExist:
+#             deleted = False
+#
+#         return JsonResponse({'deleted': deleted})
+#     else:
+#         return JsonResponse({'message': 'Invalid request method'})
 
 
 # def add_notes(request):

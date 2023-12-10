@@ -37,6 +37,7 @@
 
                                         {% if user.is_authenticated %}
 
+                                        <button class="update_note" onclick = "updateNote('{{ noted_event.event.eventid }}')"><h6><i id="{{ noted_event.event.eventid }}"></i>Update note</h6></button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -47,7 +48,7 @@
                         <div class="card-body">
                             <p>Notes:</p>
 
-                                {{ noted_event.message }}
+                               <p id="note-{{ noted_event.id }}">{{ noted_event.message }}</p>
 
                         </div>
                     </div>

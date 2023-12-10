@@ -36,7 +36,9 @@
                                         <p class="card-text">{{ noted_event.event.start_time }}</p>
 
                                         {% if user.is_authenticated %}
-
+                                                 <button type="button" class="btn btn-danger note-button" data-bs-toggle="modal">
+                                            Delete
+                                                 </button>
                                         {% endif %}
                                     </div>
                                 </div>

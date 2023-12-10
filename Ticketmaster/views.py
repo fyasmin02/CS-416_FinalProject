@@ -5,8 +5,11 @@ from .models import Userprofile, EventHistory, EventFavorite, NoteHistory
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-# from django.views.decorators.http import require_POST
+from .forms import registerForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+
 
 
 def index(request):
@@ -60,8 +63,10 @@ def index(request):
                 formatted_date = datetime.strptime(startDate, "%Y-%m-%dT%H:%M:%S%z").strftime("%b %d, %Y")
                 formatted_time = datetime.strptime(startTime, "%H:%M:%S").strftime("%I:%M %p")
 
-                event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
-
+                if request.user.is_authenticated:
+                    event_favorite_count = EventFavorite.objects.filter(user=request.user, eventid=event_id).count()  # added for multiuser
+                else:
+                    event_favorite_count = EventFavorite.objects.filter(eventid=event_id).count()
                 favorite_status = True
                 if event_favorite_count == 0:
                     favorite_status = False
@@ -196,10 +201,11 @@ def get_event_from_id(event_id):
     return None
 
 
-def addEventFavorite(request):
-    if request.method == 'POST':
-        event_id = request.POST.get('event_id')
 
+def addEventFavorite(request):
+    #if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:  # added for multiuser
+        event_id = request.POST.get('event_id')
 
         print(event_id)
 
@@ -213,6 +219,7 @@ def addEventFavorite(request):
         event_data = get_event_from_id(event_id)
 
         event_object, created = EventFavorite.objects.get_or_create(
+            user=request.user,  # added for multiuser
             eventid=event_data['eventid'],
             name=event_data['name'],
             venue=event_data['venue'],
@@ -230,7 +237,8 @@ def addEventFavorite(request):
 
         if not created:
             liked = False
-            EventFavorite.objects.get(eventid=event_id).delete()
+            event_object.delete()  # added for multiuser
+            # EventFavorite.objects.get(eventid=event_id).delete()
 
         return JsonResponse(
             {
@@ -245,12 +253,10 @@ def addEventFavorite(request):
         )
 
 
-
-
-
 def favoritesTab(request):
     if request.user.is_authenticated:
-        liked_events = EventFavorite.objects.all()
+        # liked_events = EventFavorite.objects.all()
+        liked_events = EventFavorite.objects.filter(user=request.user)  # added for multiuser
         context = {'liked_events': liked_events}
         return render(request, "favoritesTab.html", context)
     else:
@@ -304,43 +310,21 @@ def add_notes(request):
         )
 
 
-# second attempt
-# def add_notes(request):
-#     if request.method == "POST":
-#         event_id = request.POST.get('event_id')
-#         message = request.POST.get('message')
-#         return render(request, "notes.html")
-#     else:
-#         return redirect(request, "ticketmaster.html")
-
-# first attempt
-# def add_notes(request):
+# def delete_notes(request):
 #     if request.method == 'POST':
 #         event_id = request.POST.get('event_id')
-#         note_text = request.POST.get('message')
 #
 #         try:
-#             # Convert the event_id to an integer
-#             event_id = event_id
-#             # Find the event object associated with the event_id
-#             event = get_object_or_404(EventHistory, pk=event_id)
-#             # Create a new note instance and save it
-#             note = NoteHistory.objects.create(event=event, message=note_text)
+#             event = NoteHistory.objects.get(eventid=event_id)
+#             event.delete()
+#             deleted = True
+#         except NoteHistory.DoesNotExist:
+#             deleted = False
 #
-#             # Prepare the response data
-#             response_data = {
-#                 'status': 'success',
-#                 'note_id': note.id,
-#                 'message': 'Note added successfully',
-#             }
-#
-#             return JsonResponse(response_data)
-#         except (ValueError, EventHistory.DoesNotExist) as e:
-#             print(f"Error: {e}")
-#             return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-#     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-#
-#
+#         return JsonResponse({'deleted': deleted})
+#     else:
+#         return JsonResponse({'message': 'Invalid request method'})
+
 
 def notes(request):
     if request.user.is_authenticated:
@@ -352,73 +336,17 @@ def notes(request):
         return redirect('ticketmaster')
 
 
-# def add_notes(request):
-#     event = request.POST.get('event_id')
-#     note = request.POST.get('note')
-#     print('eventid ', event)
-#     print('note ',note)
-#     response_data = {'message': 'Data received and processed successfully!'}
-#     form = NoteForm(request.POST or None)
-#
-#     if form.is_valid():
-#         form.save()
-#
-#         return redirect('views_notes')
-#
-#     return render(request, 'notes.html', {'form': form})
-#     # Only allow POST requests
-#     if request.method == 'POST':
-#         # Extract data from the request
-#         event_id = request.POST.get('eventid')
-#         note = request.POST.get('noted')
-#
-#         # Find the event object associated with the event_id
-#         event = get_object_or_404(Event, pk=event_id)
-#
-#         # Create a new note instance and save it
-#         note = Note.objects.create(
-#             eventid=id,
-#             name=name,
-#             message=message,
-#             venue=venue,
-#             address=address,
-#             city=city,
-#             state=state,
-#             start_date=formatted_date,
-#             start_time=formatted_time,
-#             ticket_link=ticketLink,
-#             image_url=img
-#         )
-#
-#         # Prepare the response data
-#         response_data = {
-#             'status': 'success',
-#             'note_id': note.id,  # You can send back the ID of the created note
-#             'liked': True,  # Or any other data that your JavaScript expects
-#         }
-#
-#         return JsonResponse(response_data)
-#
-#     else:
-#         # If not a POST request, return an error response
-#         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)  #
+def register(request):
+    form = registerForm()
+    if request.method == "POST":
+        form = registerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
 
-
-# For updating note
-# def update_note(request, id):
-#     note_events = NoteHistory.objects.get(id=id)
-#     form = NoteForm(request.POST or None, instance=note_events)
-#
-#     if form.is_valid():
-#         form.save()
-#         return redirect('view_notes')
-#
-#     return render(request, 'note-form.html', {'form':form})
-#
-# # For deleting note
-# def delete_note(request):
-#     note_events = NoteHistory.objects.get(id=id)
-#     if request.method == 'POST':
-#         note_events.delete()
-#         return redirect('view_notes')
-#     return render(request,'delete-confirm.html', {'note_events':note_events})
+            # User log in
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('ticketmaster')
+    return render(request,"register.html", {'form': form})

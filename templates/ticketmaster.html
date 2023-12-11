@@ -143,12 +143,12 @@
 
 
             $.ajax({
-                url: '{% url "add_notes" %}', // Ensure this URL is correctly named in Django urls.py
+                url: '{% url "add_notes" %}',
                 type: 'POST',
                 data: {
                     event_id: eventId,
                     message: note,
-                    csrfmiddlewaretoken: '{{ csrf_token }}' // Ensure this token is correctly placed in template
+                    csrfmiddlewaretoken: '{{ csrf_token }}' 
                 },
                 success: function (response) {
                     console.log(response);

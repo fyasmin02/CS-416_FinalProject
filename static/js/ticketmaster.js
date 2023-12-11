@@ -53,5 +53,60 @@ function likeEvent(id) {
         }
     })
     }
+function updateNote(eventId) {
+    const newNote = prompt("Update note:");
+    console.log("New note input:", newNote); // Log the input for the new note
+
+    console.log("The raw eventId value is:", eventId); // Add this line to log the raw value
+    // Convert eventId to an integer
+    // var eventId = $(this).data('event_id');
+    // $.ajax({
+    //           // type: "POST",
+    //           url: "/updateNote/",
+    //         success: function (response) {
+    //               // Handle success - maybe update the note on the page without a reload
+    //               console.log("Note updated successfully:", response); // Log the success response
+    //           },
+    //           error: function (xhr, status, errorThrown) {
+    //               // Handle error
+    //               console.error("AJAX request failed with status:", status); // Log the status
+    //               console.error("Error thrown:", errorThrown); // Log the error thrown
+    //               console.error("Response status:", xhr.status); // Log the HTTP status code
+    //               console.error("Response text:", xhr.responseText); // Log the response text
+    //          }
+    //     });
+
+    //
+      if (newNote) {
+          console.log("Sending AJAX request to update note for event ID:", eventId); // Log the event ID being sent
+          $.ajax({
+              type: "POST",
+              url: "/updateNote/",
+              data: {
+                  event_id: eventId,
+                  new_note: newNote,
+                  csrfmiddlewaretoken: csrf_token
+              },
+              success: function (response) {
+                  // Handle success - maybe update the note on the page without a reload
+                  if (response.status === 'success') {
+                    var noteId = response.noteid
+                      console.log(noteId)
+                       $('#note-'+ noteId).text(newNote)
+                  }
+
+                  console.log("Note updated successfully:", response); // Log the success response
+                                },
+              error: function (xhr, status, errorThrown) {
+                  // Handle error
+                  console.error("AJAX request failed with status:", status); // Log the status
+                  console.error("Error thrown:", errorThrown); // Log the error thrown
+                  console.error("Response status:", xhr.status); // Log the HTTP status code
+                  console.error("Response text:", xhr.responseText); // Log the response text
+              }
+          });
+
+      }
+ }
 
 

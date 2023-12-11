@@ -36,9 +36,8 @@
                                         <p class="card-text">{{ noted_event.event.start_time }}</p>
 
                                         {% if user.is_authenticated %}
-                                                 <button type="button" class="btn btn-danger note-button" data-bs-toggle="modal">
-                                            Delete
-                                                 </button>
+
+                                        <button class="update_note btn btn-primary" onclick = "updateNote('{{ noted_event.event.eventid }}')"><h6><i id="{{ noted_event.event.eventid }}"></i>Update note</h6></button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -49,7 +48,7 @@
                         <div class="card-body">
                             <p>Notes:</p>
 
-                                {{ noted_event.message }}
+                               <p id="note-{{ noted_event.id }}">{{ noted_event.message }}</p>
 
                         </div>
                     </div>

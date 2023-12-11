@@ -11,5 +11,6 @@ urlpatterns = [
     path('notes/', views.notes, name='notes'),
     path('add_notes/', views.add_notes, name='add_notes'),
     path('register/', views.register, name='register'),
+    path('updateNote/', views.updateNote, name='updateNote'),
     # path('delete_notes/', views.delete_notes, name='delete_notes')
 ]
